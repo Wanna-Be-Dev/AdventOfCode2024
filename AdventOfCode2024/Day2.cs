@@ -55,6 +55,7 @@ namespace AdventOfCode
         static int Second()//TODO:FIX later govnocode
         {
             int count = 0;
+            int index = 0;
             string?[] lines = ReadInput();
 
             if (lines?.Length <= 0)
@@ -62,28 +63,26 @@ namespace AdventOfCode
 
             foreach (string line in lines)
             {
+                index++;
                 int correct = 0;
                 var numbers = line.Split(' ').Select(n => Convert.ToInt32(n)).ToList();
-                for (int i = 0; i < numbers.Count - 1; i++)
+
+                var Ascend = new List<int>(numbers).OrderBy(n => n).ToList();
+                var Descend = new List<int>(numbers).OrderByDescending(n => n).ToList();
+
+                if (numbers.SequenceEqual(Ascend) || numbers.SequenceEqual(Descend))
                 {
-                    var diff = Math.Abs(numbers[i] - numbers[i + 1]);
-                    if (diff <= 3 && diff != 0)
-                        correct++;
+                    for (int i = 0; i < numbers.Count - 1; i++)
+                    {
+                        var diff = Math.Abs(numbers[i] - numbers[i + 1]);
+                        if (diff <= 3 && diff != 0)
+                            correct++;
+                    }
                 }
                 if (correct == numbers.Count - 1)
                 {
-                    var Ascend = new List<int>(numbers);
-                    var Descend = new List<int>(numbers);
-                    Ascend.OrderBy(n => n);
-                    Descend.OrderByDescending(n => n);
-                    if (numbers.SequenceEqual(Ascend) || numbers.SequenceEqual(Descend))
-                    {
-                        count++;
-                        for (int x = 0; x < numbers.Count; x++)
-                            Console.Write(numbers[x] + " ");
-                        Console.WriteLine("    @");
-                        continue;
-                    }
+                    count++;
+                    continue;          
                 }
                 else
                 { 
@@ -91,36 +90,27 @@ namespace AdventOfCode
                     {
                         correct = 0;
                         var variant = new List<int>(numbers);
-                        variant.Remove(variant[a]);
+                        variant.RemoveAt(a);
                         for (int j = 0; j < variant.Count - 1; j++)
                         {
                             var diff = Math.Abs(variant[j] - variant[j + 1]);
-                            Console.Write(variant[j] + " ");
                             if (diff <= 3 && diff != 0)
                                 correct++;
                         }
-                        var Ascend1 = new List<int>(variant);
-                        var Descend1 = new List<int>(variant);
-                        Ascend1.OrderBy(n => n);
-                        Descend1.OrderByDescending(n => n);
-                        Console.Write(variant[variant.Count - 1]);
+                        var Ascend1 = new List<int>(variant).OrderBy(n => n).ToList();
+                        var Descend1 = new List<int>(variant).OrderByDescending(n => n).ToList();
                         if (variant.SequenceEqual(Ascend1) || variant.SequenceEqual(Descend1))
                         {
                             if (correct == variant.Count - 1)
                             {
-
-
-
-                                    count++;
-                                    Console.WriteLine("    @");
-                                    break;
-                                
+                                count++;
+                                break;   
                             }
-                            Console.WriteLine(" ");
+                            
                         }
                     }
-
                 }
+                
             }
 
             return count;
